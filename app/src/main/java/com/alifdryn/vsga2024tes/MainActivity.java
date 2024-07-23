@@ -32,8 +32,7 @@ public class MainActivity extends AppCompatActivity {
         textNama = findViewById(R.id.textView);
     }
 
-    @SuppressLint("StringFormatInvalid")
     public void showName(View view) {
-        textNama.setText(getString(R.string.nama_anda, inputNama.getText()));
+        textNama.setText("Nama Anda : " + inputNama.getText());
     }
 }
