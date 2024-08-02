@@ -1,6 +1,9 @@
 package com.alifdryn.vsga2024tes;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,7 +11,13 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.io.File;
+import java.io.FileOutputStream;
+
 public class MainActivity extends AppCompatActivity {
+
+    private ListView listView;
+    private MainAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,5 +29,50 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        listView = findViewById(R.id.listView);
+        adapter = new MainAdapter(this);
+        listView.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.clear();
+        adapter.addAll(getCatatan());
+    }
+
+    private ArrayList<Catatan> getCatatan() {
+        ArrayList<Catatan> catatan = new ArrayList<>();
+
+        File directory = new File(getFilesDir() + "/catatan");
+        File[] files = directory.listFiles();
+        if (files == null) return catatan;
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+        for (File file : files) {
+            String namaFile = file.getName();
+            Date date = new Date(file.lastModified());
+            String timestamp = formatter.format(date);
+            catatan.add(new Catatan(namaFile, timestamp));
+        }
+
+        return catatan;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menu_tambah) {
+            Intent i = new Intent(this, TambahActivity.class);
+            startActivity(i);
+            return true;
+        }
+        return false;
     }
 }
